@@ -4,8 +4,8 @@
 #include <LiquidCrystal_I2C.h>
 #include <Keypad.h>
 
-const char* WIFI_SSID = "B1014"; // change this to your own
-const char* WIFI_PASSWORD = "lalunalolipoo"; // change this to your own
+const char* WIFI_SSID = "ELCONS_WARE"; // change this to your own
+const char* WIFI_PASSWORD = "adminelcons"; // change this to your own
 const unsigned int NET_PORT = 50000;
 
 IPAddress local_IP(192, 168, 43, 151);

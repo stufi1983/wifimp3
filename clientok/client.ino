@@ -8,7 +8,7 @@ const char* WIFI_SSID = "ELCONS_WARE"; // change this to your own
 const char* WIFI_PASSWORD = "adminelcons"; // change this to your own
 const unsigned int NET_PORT = 50000;
 
-IPAddress local_IP(192, 168, 43, 153);
+IPAddress local_IP(192, 168, 43, 152);
 IPAddress gateway(192, 168, 43, 1);
 IPAddress SendIP(192, 168, 43, 255);
 IPAddress subnet(255, 255, 255, 0);
@@ -24,7 +24,7 @@ char NetMsg_Something[] = "YourMessage";
 
 unsigned long nextBroadcastTimeMS = 0;
 
-LiquidCrystal_I2C lcd(0x3f, 20, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x3f , 20, 2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 #include <DFMiniMp3.h>
 class Mp3Notify
 {
@@ -53,18 +53,18 @@ class Mp3Notify
 
 DFMiniMp3<HardwareSerial, Mp3Notify> mp3(Serial);
 
-//const byte ROWS = 4; //four rows
-//const byte COLS = 3; //three columns
-//char keys[ROWS][COLS] = {
-//  {'1', '2', '3'},
-//  {'4', '5', '6'},
-//  {'7', '8', '9'},
-//  {'*', '0', '#'}
-//};
-//byte rowPins[ROWS] =  {D4, D5, D6, D7};//connect to the row pinouts of the keypad
-//byte colPins[COLS] = {D0, D3, D8}; //connect to the column pinouts of the keypad
-//
-//Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+const byte ROWS = 4; //four rows
+const byte COLS = 3; //three columns
+char keys[ROWS][COLS] = {
+  {'1', '2', '3'},
+  {'4', '5', '6'},
+  {'7', '8', '9'},
+  {'*', '0', '#'}
+};
+byte rowPins[ROWS] =  {D4, D5, D6, D7};//connect to the row pinouts of the keypad
+byte colPins[COLS] = {D0, D3, D8}; //connect to the column pinouts of the keypad
+
+Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 char chr[255];
 byte stringPos = 0;
@@ -72,9 +72,9 @@ long currentMillis;
 long lastMillis = millis();
 
 void setup() {
-
-//  Serial.begin(9600);
   mp3.begin();
+
+  //Serial.begin(9600);
   lcd.init();                      // initialize the lcd
   lcd.backlight();
   ConnectToNetwork();
@@ -103,14 +103,22 @@ void loop() {
   }
 
   NetworkListen();
-  waitMilliseconds(1000);
-
 }
 
 void resetDisplay() {
   //  Serial.println();
   lcd.setCursor(0, 1); //kolom,baris
   lcd.print("Play:           ");
+}
+
+void requestoplay() {
+  mp3.playMp3FolderTrack(atoi(chr));  // sd:/mp3/0001.mp3
+  mp3.loop();
+  delay(1);
+
+  delay(5000);
+  resetString();
+  resetDisplay();
 }
 
 void resetString() {
@@ -171,20 +179,9 @@ void NetworkListen() {
     lcd.print(packetBuffer);
     int a = atoi(packetBuffer);
     mp3.playMp3FolderTrack(a);  // sd:/mp3/0001.mp3
+    mp3.loop();
     delay(1);
     //Serial.println(a);
     lastMillis = millis();
-  }
-}
-void waitMilliseconds(uint16_t msWait)
-{
-  uint32_t start = millis();
-
-  while ((millis() - start) < msWait)
-  {
-    // calling mp3.loop() periodically allows for notifications
-    // to be handled without interrupts
-    mp3.loop();
-    delay(1);
   }
 }
